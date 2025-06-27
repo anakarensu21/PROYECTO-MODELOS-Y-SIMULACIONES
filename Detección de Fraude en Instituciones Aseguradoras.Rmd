@@ -1,0 +1,1043 @@
+---
+title: "Detección de Fraude en Instituciones Aseguradoras en Estados Unidos"
+author: "Nuri Belen López Mercado & Ana Karen Sánchez Utrilla"
+date: "2025-03-06"
+output: pdf_document
+---
+
+# Introducción
+
+El fraude representa una de las principales preocupaciones para las compañías de seguros, especialmente en un entorno cada vez más digitalizado y automatizado. Según una encuesta realizada por Munich RE EE.UU. (2024), en los últimos cinco años los fraudes en seguros de vida han aumentado significativamente, destacándose tres tipos principales:
+
+1.	**Tergiversación del solicitante:** Se refiere a la declaración u omisión de información falsa que influye en la decisión del asegurador al emitir una póliza de vida, así como en la prima que debe pagar el asegurado. Un ejemplo común es la tergiversación sobre el consumo de tabaco.
+
+2.	**Abuso financiero de personas mayores:** Incluye prácticas como extorsión, robo, abuso de autoridad, manipulación de documentos legales y explotación financiera. En abril de 2024, la Red de Aplicación de Delitos Financieros de Estados Unidos reportó que se detectaron actividades fraudulentas por un total de 27 mil millones de dólares relacionadas con la explotación financiera de adultos mayores.
+
+3.	**Violación o uso indebido de datos:** La creciente dependencia de la tecnología, la inteligencia artificial y el Internet de las cosas ha incrementado notablemente los riesgos cibernéticos y la exposición a fraudes relacionados con el mal uso de datos.
+
+
+Por otro lado, el fraude en los seguros no se limita únicamente a los seguros de vida. De acuerdo con Nacional de Seguros (s.f.), también se presentan en otras áreas como:
+
+- **Seguros de autos:** Accidentes escenificados, daños exagerados y reclamaciones por robos ficticios.
+
+- **Seguros de salud:** Facturación por servicios no prestados, exageración de procedimientos médicos y cobro por equipo médico inexistente.
+
+- **Seguros de propiedad y hogar:** Reclamaciones infladas, robos autoinfligidos y uso de facturas falsas.
+
+
+Este trabajo tiene como propósito crear una simulación que permita analizar y detectar fraudes en instituciones aseguradoras, con el objetivo de modelar su evolución a lo largo del tiempo. La detección de fraudes se define como el proceso de identificar actividades sospechosas que podrían indicar el robo ilícito de dinero, datos o recursos (IBM, 2024), así como la tergiversación intencional, el engaño o la omisión de hechos con la finalidad de obtener beneficios de seguros de manera indebida (Munich RE, 2024).
+
+
+El desarrollo del proyecto se estructurará en ocho etapas. Primero, se definirán los objetivos generales y específicos para contextualizar el impacto esperado. Luego, se presentarán conceptos y metodologías clave, con énfasis en el método de Monte Carlo y sus aplicaciones. Posteriormente, se realizará un Análisis Exploratorio de Datos (EDA) para describir las variables a estudiar, sus distribuciones y la presencia de valores atípicos o datos faltantes. Una vez comprendidos los fundamentos teóricos y la información disponible, se detallará la aplicación del Método Monte Carlo en esta problemática, explicando los pasos a seguir y las herramientas utilizadas. Finalmente, se presentará la propuesta del modelo, los resultados obtenidos y su interpretación, resaltando los hallazgos más relevantes.
+
+
+# Titulo y Objetivo
+
+## Título
+
+Detección de Fraude en Transacciones Financieras de Instituciones de Seguros de Estados Unidos usando una Simulación Monte Carlo.
+
+## Objetivos
+
+#### Objetivo General
+
+* Modelar la evolución de fraudes en compañías aseguradoras a lo largo del tiempo mediante una simulación Monte Carlo, incorporando las variables de tipo de producto asegurado e instrumento de pago.
+
+#### Objetivos Específicos
+
+* Implementar una simulación Monte Carlo para estimar la frecuencia y evolución de fraudes en seguros.
+
+* Incorporar en la simulación las variables de tipo de producto asegurado e instrumento de pago.
+
+* Analizar los resultados de la simulación para identificar patrones y tendencias en los fraudes.
+
+* Evaluar distintos escenarios mediante la simulación para comprender la variabilidad en la ocurrencia de fraudes.
+
+# Revisión de Literatura
+
+En el análisis de riesgos dentro del sector asegurador, la simulación se ha vuelto una técnica fundamental para modelar incertidumbre y mejorar la toma de decisiones. La simulación es un método analítico que permite modelar sistemas del mundo real mediante representaciones matemáticas, estadísticas o computacionales. A través de estos modelos, se replican dinámicas y comportamientos observables en un entorno controlado, facilitando el análisis de riesgos, la evaluación de escenarios y la toma de decisiones estratégicas basadas en incertidumbre y probabilidad (Trigueros, 2021). 
+
+
+Para la implementación de una simulación, es fundamental desarrollar un modelo que represente el problema de interés. Un modelo es una abstracción matemática, estadística o computacional de un fenómeno real, diseñada para capturar sus características esenciales y permitir el análisis de su comportamiento bajo distintas condiciones (Perez, et. al., 2008). Dado que los modelos se construyen por medio de aproximaciones, estos representan una versión simplificada de la realidad. Por ello, deben orientarse a un propósito específico y ser formulados de manera que resulten eficaces para lograr su objetivo.
+
+
+Durante este proyecto se buscará utilizar el método Monte Carlo, el cual consiste en resolver un problema con la invención de juegos de azar simulando algún fenómeno real gobernado por una distribución de probabilidad. El Método Monte Carlo es un proceso estocástico numérico que requiere sortear variables aleatorias según una distribución de probabilidad (Ignacio Illana, 2013). Las metodologías de Monte Carlo presentan diversas variantes; sin embargo, en términos generales, siguen una estructura común. Primero, se modela un sistema utilizando funciones de densidad de probabilidad. Luego, se generan repetidas muestras a partir de estas distribuciones. Finalmente, se recopilan y analizan las estadísticas de interés para obtener conclusiones sobre el comportamiento del sistema (Harrison, 2010). 
+
+
+El método Monte Carlo es ampliamente utilizado en entornos con problemas de difícil solución por métodos analíticos o numéricos, como lo es el entorno financiero. En dicho entorno, este tipo de simulación ha sido utilizada para la valoración de distintos instrumentos, desde acciones hasta derivados. Concretamente, este método se ha aplicado utilizando simulaciones probabilísticas para estimar el valor de estos instrumentos mediante la generación de trayectorias aleatorias y el cálculo numérico de la esperanza matemática (Gonzáles, 2008). En cuanto a la detección de fraudes, se han utilizado gran cantidad de métodos, como algoritmos de Random Forest, que crean múltiples árboles de decisión que analizan patrones y comportamientos en los datos, identificando anomalías o transacciones sospechosas (Rayo, 2020); algoritmos de clustering K-means, que agrupan las transacciones en diferentes clústeres o grupos según sus características compartidas (Ibañez, 2024); y el método Montecarlo para simular diferentes escenarios de transacciones de tarjetas de crédito, generando múltiples trayectorias de datos para estimar la probabilidad de fraude y detectar patrones inusuales en las transacciones (Habibpour, et. al., 2023).
+
+
+# Analisis exploratorio de datos (EDA)
+
+El EDA servirá para entender la distribución y patrones en los datos antes de implementar la simulación.
+\newline
+
+_**Sobre la base de datos utilizada**_
+
+La base de datos utilizada en este proyecto proviene del Enforcement Network de Crímenes Financieros de Estados Unidos (FinCEN), específicamente de los SAR Stats (Suspicious Activity Reports Statistics), disponibles en el siguiente enlace: https://fincen.gov/reports/sar-stats
+
+Este conjunto de datos recopila información sobre reportes de actividad sospechosa en el sector financiero, presentando datos relacionados con productos financieros, instrumentos utilizados y tipos de actividades sospechosas reportadas en la industria aseguradora de Estados Unidos. La base incluye datos organizados por año y mes, comprendiendo el periodo entre el 2020 y el 2024, permitiendo analizar tendencias en posibles delitos financieros como fraudes, lavado de dinero y otras irregularidades detectadas en el sistema financiero.
+\newline
+
+**_1. Análisis de variables individuales_**
+
+A continuación, se presentará un análisis de la distribución de actividades sospechosas reportadas, la frecuencia de los diferentes productos e instrumentos financieros involucrados y una expansión de los datos para una mejor visualización de los registros individuales.
+\newline
+
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+#Instalar la paquetería necesaria
+install.packages("readr") 
+library(readr)
+install.packages("dplyr")
+library(dplyr)
+install.packages("tidyr")
+library(tidyr)
+install.packages("ggplot2")
+library(ggplot2)
+install.packages("pander")
+library(pander)
+install.packages("purrr")
+library(purrr)
+```
+
+Los nombres de las columnas del conjunto de datos utilizado son los siguientes:
+\newline
+
+```{r, echo=FALSE}
+df <- read.csv("SARStats.csv")
+datos<- df %>%
+  tidyr::uncount(Count)
+
+# Ver nombres de las columnas
+pander(colnames(df))
+```
+
+Previsualización de las primeras 5 líneas de la base de datos:
+\newline
+
+```{r, echo=FALSE}
+#Primeras 5 líneas de la base
+pander(head(df, 5))
+```
+
+Se presenta la estructura del conjunto de datos:
+\newline
+
+```{r, echo=FALSE}
+# Mostrar summary en formato bonito
+str_text <- capture.output(str(df))
+str_df <- data.frame(Descripcion = str_text)
+pander(str_df)
+```
+
+Como se puede observar, la mayoría de las variables en la base de datos son de tipo carácter, es decir, contienen valores textuales. En este contexto, la variable clave es count, ya que indica la frecuencia con la que se repiten los casos con las mismas características en las demás columnas. Gracias a esta variable, es posible determinar el número de fraudes registrados en un mes específico de un determinado año o identificar la cantidad de fraudes asociados a un mismo tipo de instrumento de pago. Esto resulta fundamental, ya que permite generar variables discretas a partir de estas categorías al trabajar con la base de datos.
+\newline
+\newline
+
+_**Resumen estadístico por la fecha registrada al momento de realizar el fraude:**_
+```{r, echo = FALSE}
+# Resumen por Fechas
+dfmod <- df
+dfmod$date <- paste(df$Year, df$Month, sep = " ")
+
+summary_date <- dfmod %>%
+  group_by(date) %>%
+  summarise(Total_Count = sum(Count))
+
+pander(head(summary_date,10))
+
+# Mostrar summary en formato bonito
+summary_textd <- capture.output(summary(summary_date))
+summary_dfd <- data.frame(Descripcion = summary_textd)
+pander(summary_dfd)
+```
+En el mes y año en el que se presentaron menos fraudes, el total fue de 319 incidentes. Mientras que el mayor reporte de fraudes en un mes fue de 1546, con un promedio de 603.9 fraudes al mes. 
+
+La media es un poco mayor que la mediana, lo que podría sugerir que la distribución podría estar sesgada hacia la derecha (algunos valores grandes elevan el promedio). Además, hay una diferencia considerable entre el máximo y el tercer cuartil, lo que indica la posible presencia de valores atípicos altos.
+\newline
+\newline
+
+_**Resumen estadístico por el tipo instrumento de pago utilizado al momento de realizar el fraude:**_
+
+```{r, echo = FALSE}
+# Resumen por Instrument
+summary_instrument <- df %>%
+  group_by(Instrument) %>%
+  summarise(Total_Count = sum(Count))
+
+pander(summary_instrument)
+
+# Mostrar summary en formato bonito
+summary_texti <- capture.output(summary(summary_instrument))
+summary_dfi <- data.frame(Descripcion = summary_texti)
+pander(summary_dfi)
+```
+Puede observarse que el valor máximo es 17,386 que representa la transferencia de fondos como el principal instrumento de pago presentado en los fraudes, mientras que el instrumento menos utilizado de manera histórica fueron las monedas extranjeras con únicamente 2 casos.
+
+La mediana es de 1,504, y la media es de 4,026, lo que indica una distribución sesgada por valores altos. La dispersión es notable, con un primer cuartil de 11, un tercer cuartil de 5,188 y un máximo de 17,386, sugiriendo que algunos métodos de pago concentran la mayor parte de los fraudes.
+\newline
+\newline
+
+_**Resumen estadístico por el tipo de producto registrado en el fraude:**_
+
+```{r, echo = FALSE}
+# Resumen por Product
+summary_product <- df %>%
+  group_by(Product) %>%
+  summarise(Total_Count = sum(Count, na.rm = TRUE))
+
+pander(summary_product)
+
+# Mostrar summary en formato bonito
+summary_textp <- capture.output(summary(summary_product))
+summary_dfp <- data.frame(Descripcion = summary_textp)
+pander(summary_dfp)
+```
+El producto con mayor presencia fueron los productos de seguros o anualidades, mientras que el de menor presencia fueron las acciones. El número de fraudes por producto varía entre 1 y 30,504, con una media de 3,019.67 y una mediana de 183.5, lo que sugiere una distribución sesgada con valores extremos elevados. 
+\newline
+\newline
+
+_**Resumen estadístico por el tipo de actividad sospechosa registrada en el fraude:**_
+
+```{r, echo = FALSE}
+# Resumen por Suspicious Activity
+summary_suspicious <- df %>%
+  group_by(Suspicious.Activity) %>%
+  summarise(Total_Count = sum(Count))
+
+pander(head(summary_suspicious,10))
+
+# Mostrar summary en formato bonito
+summary_texts <- capture.output(summary(summary_suspicious))
+summary_dfs <- data.frame(Descripcion = summary_texts)
+pander(summary_dfs)
+```
+La tabla anterior muestra la cantidad de cada tipo de actividad sospechosa registrada a través de los años. Es importante mencionar que la primera tabla está resumida, y solo muestra los primeros 10 diferentes tipos de actividades sospechosas, pues hay una gran variedad registrada.
+
+Las actividades más comunes son la apropiación de cuenta y las transferencias electrónicas no autorizadas. En contraste, actividades como el fraude en solicitudes (4 casos) y los préstamos comerciales fraudulentos (1 caso) tienen una incidencia mucho menor. La estadística descriptiva indica que el número de fraudes por actividad varía entre 1 y 4,221, con una media de 464.56 y una mediana de 94, lo que sugiere una distribución desigual con ciertos tipos de fraude mucho más frecuentes que otros.
+\newline
+\newline
+
+**_2. Valores extremos o nulos_**
+
+Se evaluará la existencia de valores extremos en las columnas, así como de valores extremos que puedan afectar los estadísticos.
+\newline
+
+```{r, echo = FALSE, fig.width=7, fig.height=3, fig.align='center'}
+# Convertir las variables categóricas a factores
+df$Month <- as.factor(df$Month)
+df$Industry <- as.factor(df$Industry)
+df$Suspicious.Activity <- as.factor(df$Suspicious.Activity)
+df$Product <- as.factor(df$Product)
+df$Instrument <- as.factor(df$Instrument)
+
+# Identificar valores atípicos usando el método de los cuartiles (IQR)
+outlier_detection <- function(data, column) {
+  Q1 <- quantile(data[[column]], 0.25, na.rm = TRUE)
+  Q3 <- quantile(data[[column]], 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  
+  data %>% filter(data[[column]] < lower_bound | data[[column]] > upper_bound)
+}
+
+# Detectar valores atípicos en la columna Count
+outliers <- outlier_detection(df, "Count")
+
+# Visualización con boxplot por Producto
+ggplot(df, aes(x = Product, y = Count)) +
+  geom_boxplot() +
+  coord_flip() +
+  theme_minimal() +
+  ggtitle("Valores extremos en Count por Producto")
+```
+
+
+La mayoría de los productos tienen una distribución con valores concentrados cerca de la mediana y algunos valores extremos alejados del resto, especialmente en los productos de seguros o anualidades y los productos catalogados como "otros". Se observan varios valores atípicos, lo que indica que algunos productos tienen conteos significativamente mayores o menores que la mayoría. En particular, los productos de seguros o anualidades tienen una amplia dispersión y muchos valores atípicos que sugieren alta variabilidad.
+\newline
+
+```{r, echo = FALSE, fig.width=7, fig.height=3, fig.align='center'}
+# Visualización con boxplot por Instrumento
+ggplot(df, aes(x = Instrument, y = Count)) +
+  geom_boxplot() +
+  coord_flip() +
+  theme_minimal() +
+  ggtitle("Valores extremos en Count por Instrumento")
+```
+
+
+La mayoría de los instrumentos tienen una distribución concentrada cerca de la mediana, pero con varios valores extremos alejados. Los tipos de instrumento "Funds Transfer" y "Money Orders" presentan una amplia dispersión y numerosos valores atípicos, lo que indica alta variabilidad en su recuento. Otros instrumentos como "U.S. Currency" y "Personal/Business Check" también tienen varios valores atípicos, sugiriendo que algunas transacciones son significativamente mayores o menores que el resto.
+\newline
+\newline
+
+
+**_3. Distribución de los datos_**
+
+```{r, echo = FALSE, fig.width=7, fig.height=3, fig.align='center'}
+# Convertir nombres de meses a números
+datos$Month <- match(datos$Month, month.name)
+
+# Convertir Year y Month en una única variable de fecha para facilitar el gráfico temporal
+datos$Date <- as.Date(paste(datos$Year, datos$Month, "01", sep = "-"))
+
+# Gráfico de barras: Número de incidentes por mes y año
+ggplot(datos, aes(x = Date)) +
+  geom_bar(fill = "lightblue") +
+  labs(title = "Número de incidentes por mes y año",
+       x = "Fecha",
+       y = "Número de incidentes") +
+  theme_minimal()
+```
+
+
+La tendencia general del número de incidentes por año parece aumentar con el tiempo, aunque con fluctuaciones mensuales. Además, se observan picos en meses donde el número de incidentes es significativamente mayor que el promedio, especialmente un pico extremo alrededor de 2024. Se observan variaciones periódicas, lo que podría indicar patrones estacionales o eventos recurrentes que afectan el número de incidentes.
+\newline
+
+```{r, echo = FALSE, fig.width=7, fig.height=3, fig.align='center'}
+# Gráfico de barras: Tipo de producto
+ggplot(datos, aes(x = Product)) +
+  geom_bar(fill = "turquoise4") +
+  labs(title = "Distribución del tipo de producto",
+       x = "Producto",
+       y = "Frecuencia") +
+  theme_minimal() +
+  coord_flip()
+
+```
+
+
+Es claro que el producto con mayor frecuencia son los productos de seguros o anualidades. Lo cual tiene sentido pues los datos refieren a fraudes presentados en Instituciones de Seguros.
+\newline
+
+```{r, echo = FALSE, fig.width=7, fig.height=3, fig.align='center'}
+# Gráfico de barras: Tipo de instrumento
+ggplot(datos, aes(x = Instrument)) +
+  geom_bar(fill = "slateblue3") +
+  labs(title = "Distribución del tipo de instrumento",
+       x = "Instrumento",
+       y = "Frecuencia") +
+  theme_minimal() +
+  coord_flip()
+```
+
+
+El principal instrumento utilizado para el fraude son las transferencias electrónicas pues son, por mucho, el método más común, seguidas por los cheques personales o comerciales. Instrumentos como los cheques de viajero y la moneda extranjera tienen una frecuencia mucho menor.
+\newline
+
+```{r, echo = FALSE, fig.width=8, fig.height=5, fig.align='center'}
+#Relacion entre Producto e Instrumento
+ggplot(datos, aes(x = Instrument, fill = Product)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Relación entre Instrumento y Producto",
+       x = "Instrumento",
+       y = "Frecuencia") +
+  theme_minimal() +
+  coord_flip() +  # Mantiene la orientación horizontal
+  theme(
+    legend.position = "bottom",  # Posicion leyenda 
+    legend.text = element_text(size = 8),  # Tamaño leyenda
+    legend.title = element_text(size = 9),  # Tamaño del título de la leyenda
+    legend.key.size = unit(0.4, "cm"),  # Tamaño de los cuadrados de la leyenda
+    plot.title = element_text(size = 14, face = "bold"),  # Tamaño título
+    axis.text = element_text(size = 10),  # Tamaño textos del eje
+    axis.title = element_text(size = 13)  # Tamaño títulos del eje
+  )
+
+```
+
+
+```{r, echo = FALSE, fig.width=8, fig.height=5, fig.align='center'}
+#Tendencia de cada tipo de producto a lo largo del tiempo
+ggplot(datos, aes(x = Date, fill = `Product`)) +
+  geom_bar() +
+  labs(title = "Evolución de los tipos de producto en el tiempo",
+       x = "Fecha",
+       y = "Número de incidentes") +
+  theme_minimal()+
+  theme(
+    legend.position = "bottom",  # Posicion leyenda 
+    legend.text = element_text(size = 8),  # Tamaño leyenda
+    legend.title = element_text(size = 9),  # Tamaño del título de la leyenda
+    legend.key.size = unit(0.4, "cm"),  # Tamaño de los cuadrados de la leyenda
+    plot.title = element_text(size = 14, face = "bold"),  # Tamaño título
+    axis.text = element_text(size = 10),  # Tamaño textos del eje
+    axis.title = element_text(size = 13)  # Tamaño títulos del eje
+  )
+
+```
+
+
+Los productos de seguros o anualidades son el producto más frecuente en los incidentes registrados. Se observa un incremento general en el número de incidentes a lo largo del tiempo, con algunos picos notables. También se pueden notar algunas variaciones en productos específicos, las tarjetas de credito y debito, que aparecen en ciertos momentos con valores más altos. Esto sugiere que, aunque ciertos productos mantienen una presencia constante, hay fluctuaciones en la relevancia de algunos instrumentos en función del tiempo.
+\newline
+
+```{r, echo = FALSE, fig.width=8, fig.height=5, fig.align='center'}
+#Tendencia de cada tipo de instrumento a lo largo del tiempo
+ggplot(datos, aes(x = Date, fill = `Instrument`)) +
+  geom_bar() +
+  labs(title = "Evolución de los tipos de instrumento en el tiempo",
+       x = "Fecha",
+       y = "Número de incidentes") +
+  theme_minimal()+
+  theme(
+    legend.position = "bottom",  # Posicion leyenda 
+    legend.text = element_text(size = 8),  # Tamaño leyenda
+    legend.title = element_text(size = 9),  # Tamaño del título de la leyenda
+    legend.key.size = unit(0.4, "cm"),  # Tamaño de los cuadrados de la leyenda
+    plot.title = element_text(size = 14, face = "bold"),  # Tamaño título
+    axis.text = element_text(size = 10),  # Tamaño textos del eje
+    axis.title = element_text(size = 13)  # Tamaño títulos del eje
+  )
+
+```
+
+
+Las transferencias de fondos son el instrumento más frecuente en los incidentes fraudulentos presentados a lo largo de los años. Otros instrumentos como cheques personales y órdenes de dinero también tienen una presencia constante pero menor. 
+
+# Metodología
+
+El proceso de modelado para una simulación implica la formulación matemática del problema a estudiar, asegurando que el sistema funcione de manera adecuada. Para ello, es necesario seguir una serie de pasos, que incluyen la identificación del problema, su representación en términos matemáticos, la resolución del modelo y, finalmente, la interpretación de los resultados.
+
+
+Para el análisis de datos se utilizó el lenguaje de programación R, junto con diversas librerías especializadas en manipulación de datos, visualización y detección de valores extremos. Las principales librerías utilizadas fueron:
+
+- **readr:** Para la lectura y carga de datos.
+
+- **dplyr:** Para la manipulación y agregación de datos.
+
+- **tidyr:** Para la transformación y limpieza de los datos.
+
+- **ggplot2:** Para la visualización de datos.
+
+- **pander:** Para la presentación de resultados en formato de tabla.
+
+En el análisis de variables individuales se realizó una exploración inicial de la estructura del conjunto de datos, incluyendo la obtención de los nombres de las columnas, previsualización de las primeras filas del conjunto de datos, evaluación del tipo de cada variable y un análisis estadístico del número de fraudes por mes y año, por tipo de instrumento de pago, tipo de producto y tipo de actividad sospechosa.
+
+Para esto, se usó pander() para visualizar las estructuras de los datos, mientras que summary() permitió analizar estadísticas descriptivas por tipo de producto e instrumento financiero.
+
+Se verificó la existencia de valores extremos utilizando el método de los cuartiles (IQR):
+
+- Se calcularon los cuartiles Q1 y Q3 para la variable Count.
+
+- Se definieron los límites inferior y superior para detectar valores atípicos.
+
+- Se usaron boxplots para visualizar la distribución de valores extremos por producto e instrumento financiero.
+
+Se realizaron los siguientes análisis con el fin de visualizar el comportamiento temporal de los fraudes, es decir, la distribución de los datos.
+
+* Creación de una variable de fecha combinando Year y Month.
+
+* Gráfico de barras de incidentes por mes y año.
+
+* Gráficos de barras de distribución de fraudes por tipo de producto e instrumento financiero.
+
+* Relación entre tipo de producto e instrumento utilizado.
+
+* Evolución de los tipos de productos e instrumentos a lo largo del tiempo.
+
+
+# Propuesta del modelo
+
+## Descripción del Modelo Propuesto
+
+El modelo propuesto se basa en la simulación de Monte Carlo para analizar la evolución de fraudes en compañías aseguradoras a lo largo del tiempo. Se generaron trayectorias aleatorias de eventos de fraude considerando la distribución de probabilidad de ocurrencia en función de dos variables clave:
+
+* Tipo de producto: Se modelaron diferentes categorías de productos utilizados durante el fraude.
+
+* Instrumento de pago utilizado: Se hizo un análisis de los distintos métodos de pago empleados en los fraudes.
+
+Cada simulación consistirá en generar múltiples escenarios posibles de evolución de fraudes en el tiempo, permitiendo así evaluar tendencias y detectar patrones emergentes.
+
+
+## Justificación de la Elección del Modelo
+
+
+El método de Monte Carlo es una técnica ampliamente utilizada en entornos financieros y de detección de fraudes debido a su capacidad para modelar incertidumbre y generar escenarios probabilísticos. Dado que el fraude en seguros es un fenómeno dinámico con múltiples factores de influencia, el uso de Monte Carlo permite:
+
+
+* Incorporar la aleatoriedad inherente a los fraudes.
+
+* Evaluar el impacto de distintas combinaciones de productos e instrumentos de pago.
+
+* Analizar tendencias temporales sin requerir supuestos estrictos de distribución.
+
+* Comparar diferentes escenarios para mejorar la detección de patrones fraudulentos.
+
+## Supuestos del Modelo
+
+Para la implementación del modelo, se asumen los siguientes supuestos:
+
+1.	La ocurrencia de fraudes sigue una distribución de probabilidad conocida poisson, debido a que la variable representa el número de fraudes en el tiempo, probando tambien que puede distribuirse binomial negativa.
+
+2.	La probabilidad de fraude varía según el tipo de producto asegurado y el instrumento de pago empleado.
+
+3.	Los fraudes ocurren de manera independiente entre los diferentes meses.
+
+4.	Se cuenta con datos históricos suficientes para estimar adecuadamente las distribuciones de probabilidad.
+
+## Parámetros del Modelo y su Estimación
+
+Los principales parámetros del modelo incluyen:
+
+* *_Tasa de fraude diaria promedio por mes:_* Se estima a partir del número de fraudes registrados por mes dividido entre el número de días hábiles.
+
+* *_Distribución de fraudes:_* Se ajusta una función de densidad basada en los datos históricos para modelar la evolución de los fraudes en el tiempo.
+
+* *_Número de simulaciones:_* Se definirán al menos 10,000 iteraciones para garantizar una adecuada convergencia de los resultados.
+
+Estos parámetros se estimarán utilizando técnicas estadísticas en R, incluyendo ajustes de distribución, estimaciones de máxima verosimilitud y validación mediante pruebas de bondad de ajuste.
+
+
+## Construcción del Modelo General: Ajuste a una distribución
+
+La distribución poisson es la ideal para describir este tipo de fenómeno debido a que estamos modelando la cantidad de veces que ocurre un evento en un intervalo fijo de tiempo, en este caso, fraudes registrados en compañías de seguros a lo largo del tiempo.
+
+En esta sección se generaró el modelo para todo el conjunto de datos y se realizaron las simulaciones acorde. Primero se construyó el modelo, para esto fue necesario obtener el parámetro a utilizar, en este caso, lambda que representa la frecuencia de fraudes por mes. El parámetro obtenido se muestra a continuación:
+
+```{r, echo= FALSE}
+
+# Agrupar por mes y año para contar los fraudes mensuales
+fraudes_mensuales <- df %>%
+  group_by(Year, Month) %>%
+  summarise(fraudes = sum(Count), .groups = "drop")
+
+# Calcular el número total de fraudes y el número de meses únicos
+total_fraudes <- sum(fraudes_mensuales$fraudes)
+total_meses <- nrow(fraudes_mensuales)
+
+# Calcular lambda (Estimador MLE)
+lambda_general <- total_fraudes / total_meses
+
+
+# Mostrar resultados
+cat("Total de fraudes:", total_fraudes, "\n")
+cat("Total de meses:", total_meses, "\n")
+cat("Lambda estimado:", lambda_general, "\n")
+
+```
+Una vez contando con el parámetro, se debe comprobar su ajuste a la distribución. Para ello se realizó la prueba Chi-cuadrada:
+
+```{r, echo= FALSE, warning=FALSE}
+x <- fraudes_mensuales$fraudes
+
+#Definir rango de categorías
+k_max <- max(x)
+valores <- 0:k_max
+
+#Obtener tabla completa de frecuencias observadas
+obs_freq <- table(factor(x, levels = valores))
+
+#Probabilidades teóricas bajo Poisson
+probs <- dpois(valores, lambda = lambda_general)
+
+#Frecuencias esperadas
+expected <- sum(obs_freq) * probs
+
+#Validar si todas las esperadas mayores o iguales a 5; si no, agrupar
+if (any(expected < 5)) {
+  # Agrupar clases bajas y altas en un solo grupo final
+  threshold <- which(cumsum(expected) > 0.95 * sum(expected))[1]
+  obs_agregado <- c(sum(obs_freq[1:threshold]), sum(obs_freq[(threshold+1):length(obs_freq)]))
+  exp_agregado <- c(sum(expected[1:threshold]), sum(expected[(threshold+1):length(expected)]))
+  
+  resultado <- chisq.test(x = obs_agregado, p = exp_agregado, rescale.p = TRUE)
+} else {
+  # Si todo bien, aplicar directamente
+  resultado <- chisq.test(x = obs_freq, p = probs, rescale.p = TRUE)
+}
+
+print(resultado)
+```
+
+De lo anterior puede obervarse que, los datos no se ajustan bien a una distribución poisson con lambda igual a 603.9333, pues para que esta hipótesis sea aceptada el p-value debería ser mayor a 0.05, lo cual evidentemente no se cumple. Antes de descartar a la distribución poisson para el modelo, se revizó la dispersión de los datos:
+
+```{r, echo = FALSE}
+var_fraudes <- var(fraudes_mensuales$fraudes)
+mean_fraudes <- mean(fraudes_mensuales$fraudes)
+dispersion <- var_fraudes / mean_fraudes
+cat("Varianza:", var_fraudes, "Media:", mean_fraudes, "Dispersión:", dispersion, "\n")
+```
+Debido a que la dispersión de los datos es mayor a 1.5, el conjunto de datos cuenta con una sobre-dispersión. Es altamente probable que este conjunto no se distribuya poisson, pues esta distribución se caracteriza por tener una dispersión igual a 1 ya que la media y la varianza son de mismo valor.
+
+Debido a la volatilidad tan marcada de los datos, se propone descartar la hipótesis de la distribución poisson y optar por una distribución binomial negativa. Esta distribución puede utilizarse debido a que permite que la varianza sea mayor a la media, además de que tambien trabaja con datos de conteo, como lo hace la Poisson.
+
+A continuación se estimarán los parámetros de dicha distribución a partir de MLE:
+
+```{r, echo= FALSE, results='hide', message = FALSE}
+library(MASS)
+
+modelo_nb <- glm.nb(fraudes ~ 1, data = fraudes_mensuales)
+summary(modelo_nb)
+
+# Obtener los parámetros
+mu <- exp(coef(modelo_nb)[1])
+theta <- modelo_nb$theta
+
+```
+
+```{r, echo =FALSE}
+#Visualizar parámetros obtenidos
+cat("El parámetro mu (media estimada) es: ", mu, "\n")
+cat("El parámetro theta (dispersión) es: ", theta)
+```
+
+El modelo binomial negativo permite manejar esta variabilidad adicional, por lo que resulta mucho más apropiado para los datos. Cabe mencionar que, a diferencia del modelo Poisson, no es posible aplicar directamente pruebas como Kolmogorov–Smirnov o chi-cuadrado para evaluar su ajuste, ya que los parámetros del modelo (media y dispersión) se estiman a partir de los mismos datos, lo que invalida las condiciones necesarias para aplicar estos tests de forma tradicional.
+
+## Construcción de Modelos Según el tipo de Instrumento de pago y el Producto: Ajuste a una distribución
+
+Se calcularon una serie de lambdas de corte mensual para cada combinación de instrumento de pago y tipo de producto detectados en el fraude. Para ello primero se realizó una exploración de la frecuncia de dichas combinaciones, pues en el Análisis Exploratorio de los Datos se pudieron identificar algunos sesgos significativos en estas variables. A continuación se presentarán las primeras observaciones del conteo de fraudes y la cantidad de meses en los que se registraron para cada combinación.
+
+```{r, echo = FALSE}
+resumen <- df %>%
+    group_by(Product, Instrument) %>%
+    summarise(
+      total_fraudes = sum(Count),
+      meses_con_datos = n_distinct(paste(Year, Month)),
+      .groups = "drop"
+    )
+
+resumen_tabla <- resumen%>%
+  mutate(Combinacion = paste(Product, Instrument, sep = " - ")) %>%
+  dplyr::select(Combinacion, total_fraudes, meses_con_datos)
+
+pander(head(resumen_tabla,10))  
+```
+
+Las primeras tres combinaciones presentadas ocurrieron únicamente en un mes dentro del conjunto de datos. Además, el número total de fraudes registrados en ellas es bajo, por lo que no aportan evidencia suficiente para ser consideradas unidades estadísticas relevantes. En algunos casos, como la segunda combinación, se trata simplemente de valores puntuales sin continuidad temporal.
+
+Por esta razón, se eliminarán todas aquellas combinaciones poco significativas o que podrían generar ruido en el análisis. Los criterios utilizados para eliminar combinaciones fueron:
+
+* La combinación se presenta en 3 meses o menos.
+
+* La combinación cuenta con un total de 12 fraudes presentados o menos.
+
+Después de hacer esta modificación, los datos quedan de la siguiente manera:
+
+```{r, echo = FALSE}
+
+#Eliminándolos de nuestra tabla resumen
+datos_agregados <- resumen %>%
+  filter(
+    total_fraudes > 12,
+    meses_con_datos > 3
+  ) %>%
+  # Crear nombre de combinación
+  mutate(Combinacion = paste(Product, Instrument, sep = " - ")) %>%
+  group_by(Combinacion) %>%
+  summarise(
+    total_fraudes = sum(total_fraudes),
+    meses_con_datos = sum(meses_con_datos),
+    .groups = "drop"
+  )
+
+#Eliminándolos también de df para el análisis posterior
+df <- df %>%
+  group_by(Product, Instrument) %>%
+  mutate(
+    total_fraudes = sum(Count),
+    meses_con_datos = n_distinct(paste(Year, Month))
+  ) %>%
+  ungroup() %>%
+  filter(
+    total_fraudes > 12,
+    meses_con_datos > 3
+  )
+
+# Mostrar tabla
+pander(datos_agregados)
+
+```
+
+A continuación, se realizó el cálculo de los parámetros para la distribución Binomial Negativa, dichos parámetros se presentan a continucaión para cada combinación:
+
+```{r, echo = FALSE, warning=FALSE}
+# Crear columna Combinacion en df original
+df <- df %>%
+  mutate(Combinacion = paste(Product, Instrument, sep = " - "))
+
+# Agrupar por mes para tener los fraudes mensuales por combinación
+df_mensual <- df %>%
+  group_by(Combinacion, Year, Month) %>%
+  summarise(fraudes = sum(Count), .groups = "drop")
+
+# Filtrar solo combinaciones válidas que aparecen en datos_agregados
+combinaciones_validas <- unique(datos_agregados$Combinacion)
+
+# Calcular mu y theta para cada combinación usando glm.nb
+parametros <- map_dfr(combinaciones_validas, function(comb) {
+  datos <- df_mensual %>% filter(Combinacion == comb)
+  
+  # Si hay menos de 2 datos, no se puede ajustar el modelo
+  if(nrow(datos) < 2) {
+    return(tibble(Combinacion = comb, mu = NA, theta = NA))
+  }
+  
+    modelo <- tryCatch(
+    glm.nb(fraudes ~ 1, data = datos, control = glm.control(maxit = 100)),
+    error = function(e) return(NULL)
+  )
+  
+  if (is.null(modelo)) {
+    return(tibble(Combinacion = comb, mu = NA, theta = NA))
+  }
+  
+  mu <- exp(coef(modelo)[1])
+  theta <- modelo$theta
+  
+  tibble(Combinacion = comb, mu = mu, theta = theta)
+})
+
+#Ajuste al modelo binomianl negativo
+parametros <- parametros %>%
+  mutate(
+    modelo_recomendado = case_when(
+      is.na(theta) ~ "Datos insuficientes",
+      theta > 1e+6 ~ "Poisson (aprox.)",
+      theta >= 100 ~ "Poisson (aprox.)",
+      theta >= 10 ~ "Binomial Negativa (leve)",
+      TRUE ~ "Binomial Negativa"
+    )
+  )
+# Mostrar tabla
+pander(parametros)
+
+```
+Algunas combinaciones cuentan con un valor de theta elevado. Cuando esto sucede, es recomendable optar por una distribución poisson en vez de una binomial negativa, esto se debe a que cuando theta tiende a infinito, la distribución binomial se comporta como una distribución poisson (haciendo que la varianza sea igual a la media). Utilizar una distribución poisson en estos casos simplifica el modelo, al contar únicamente con un parámetro en lugar de dos, lo cual es preferible de acuerdo con el principio de parsimonia.
+
+Por ello, se calcularon la media y la varianza de aquellas combinaciones en las que se sugiere utilizar una distribución poisson, para comprobar que estos valores sean realmente iguales o muy similares y que sí sea adecuado utilizar una distribución poisson para modelarlos.
+
+```{r,echo = FALSE}
+
+#Filtrar combinaciones con theta alto
+poisson_like <- parametros %>%
+  filter(theta > 100) %>%
+  pull(Combinacion)
+
+#Calcular media y varianza para esas combinaciones
+poisson_stats <- df_mensual %>%
+  filter(Combinacion %in% poisson_like) %>%
+  group_by(Combinacion) %>%
+  summarise(
+    media = mean(fraudes),
+    varianza = var(fraudes),
+    dispersion = varianza / media,
+    .groups = "drop"
+  )
+
+# Mostrar resultados
+pander(poisson_stats)
+```
+Puede notarse que éstas combinaciones cuentan con dispersiones bajas y cercanas a 1, como la dispersión de la distribución poisson. Debido a ello se procederá a modelarlas utilizando dicha distribución.
+
+A continuación se muestran las combinaciones, su distribución y sus parámetros:
+
+### Combinaciones modeladas con la distribución Poisson
+
+```{r,echo = FALSE}
+# Tabla Poisson
+tabla_poisson <- parametros %>%
+  filter(theta > 100) %>%
+  transmute(
+    Combinacion,
+    lambda = mu  # lambda es igual a mu cuando theta es grande
+  )
+
+# Mostrar tabla
+pander(tabla_poisson)
+```
+
+### Combinaciones modeladas con la distribución Binomial Negativa
+
+```{r, echo =FALSE}
+# Tabla Binomial Negativa
+tabla_binomial <- parametros %>%
+  filter(theta <= 100, !is.na(theta)) %>%
+  dplyr::select(Combinacion, mu, theta)
+
+# Mostrar tabla
+pander(tabla_binomial)
+
+```
+
+
+
+# Resultados
+
+## Simulación Monte Carlo - Modelo General
+
+Para modelar el número mensual de fraudes en instituciones aseguradoras, se implementó una simulación Monte Carlo basada en la distribución binomial negativa, seleccionada por su capacidad de manejar sobredispersión.
+
+Utilizando los parámetros estimados del modelo general ($\mu$ = 603.93, $\theta$ = 10.32), se realizaron 10,000 simulaciones, cada una representando un escenario potencial del número de fraudes en un mes. Esto permitió observar la variabilidad esperada, identificar posibles valores atípicos y evaluar la utilidad del modelo como herramienta para gestionar riesgos. El histograma correspondiente muestra una distribución dispersa, reflejando el comportamiento volátil de los datos históricos.
+
+El resultado de la simulación es una distribución de valores que refleja la variabilidad esperada en la ocurrencia mensual de fraudes. Se generó un histograma para visualizar dicha distribución y se obtuvieron estadísticas descriptivas para su análisis.
+
+Esta simulación permite observar:
+
+- La forma y dispersión de la distribución de fraudes mensuales.
+
+- La posibilidad de ocurrencia de meses con niveles atípicos de fraude (picos extremos).
+
+- La utilidad del modelo como base para evaluar riesgo y planificar estrategias de mitigación.
+
+```{r, echo = FALSE, fig.width=8, fig.height=5, fig.align='center'}
+mu <- 603.9333
+theta <- 10.32264
+
+# Número de simulaciones
+n_sim <- 10000
+
+# Simulación usando distribución binomial negativa
+set.seed(123)
+simulaciones_general <- rnbinom(n_sim, size = theta, mu = mu)
+
+# Resultados
+fg <-summary(simulaciones_general)
+pander(fg)
+
+hist(simulaciones_general, breaks = 50, main = "Simulación Monte Carlo - Modelo General",
+     xlab = "Número de fraudes simulados por mes", col = "skyblue")
+
+```
+
+## Simulación Monte Carlo por Combinación de Producto e Instrumento de Pago
+Con el fin de obtener un análisis más granular, se desarrollaron simulaciones independientes para cada combinación significativa de tipo de producto asegurado e instrumento de pago, utilizando los parámetros ajustados previamente para cada caso.
+
+
+- *Clasificación de las combinaciones según el modelo de ajuste:*
+Se utilizaron distribuciones binomiales negativas en la mayoría de los casos, debido a que presentaban sobredispersión. Para algunas combinaciones con varianza similar a la media, se optó por un modelo Poisson, más parsimonioso y adecuado para esos casos.
+
+- *Detalles de la simulación:*
+Se definieron los parámetros estimados $\mu$ (media esperada de fraudes mensuales) y $\theta$ (dispersión) para cada combinación.
+
+Se ejecutaron 10,000 simulaciones por combinación, generando escenarios posibles de ocurrencia mensual de fraudes.
+
+Se agruparon los resultados en listas (simulaciones_binomial y simulaciones_poisson) según la distribución utilizada.
+
+Finalmente, se graficó un histograma por cada combinación, permitiendo visualizar la distribución probabilística simulada del número de fraudes.
+
+
+```{r, echo = FALSE, fig.width=8, fig.height=5, fig.align='center'}
+# Definimos combinaciones y parámetros
+combinaciones_binomial <- list(
+  "Credit Card - Bank/Cashier's Check" = list(mu = 13, theta = 0.7705),
+   "Credit Card - Funds Transfer" = list(mu = 4.217, theta = 5.447),
+   "Credit Card - Money Orders" = list(mu = 15, theta = 0.5451),
+   "Credit Card - Personal/ Business Check" = list(mu = 7.067, theta = 1.018),
+   "Debit Card - Personal/ Business Check" = list(mu = 14.8, theta = 1.056),
+   "Credit Card - U.S. Currency" = list(mu = 7.667, theta = 0.8394),
+   "Debit Card -  U.S. Currency" = list(mu = 12.86, theta = 1.172),
+  "Deposit Account - Bank/ Cashier’s Check" = list(mu = 4.833, theta = 1.237),
+  "Deposit Account - Funds Transfer" =list(mu =11.04, theta = 2.514),
+ "Deposit Account - Personal/ Business Check"=list(mu = 6.118, theta = 1.97),
+ "Insurance/ Annuity Products - Bank/ Cashier’s Check"=list(mu = 22.05, theta = 4.204),
+ "Insurance/ Annuity Products - Funds Transfer" =list(mu =230.5 , theta =3.23),
+ "Insurance/ Annuity Products - Money Orders" =list(mu =82.85 , theta =4.706),
+ "Insurance/ Annuity Products - Other" =list(mu =16.84 , theta =1.642),
+ "Insurance/ Annuity Products - Personal/ Business Check"=list(mu = 137.1 , theta =17.97),
+ "Insurance/ Annuity Products - U.S. Currency" =list(mu =19.25 , theta =10.71),
+ "Mutual Fund - Funds Transfer" =list(mu =9.667, theta = 2.645),
+ "Mutual Fund - Personal/ Business Check"=list(mu = 6 , theta =10.39),
+ "Other - Bank/Cashier’s Check"=list(mu = 4.667, theta = 4.896),
+ "Other - Funds Transfer" =list(mu =43.41, theta = 1.111),
+ "Other - Money Orders"=list(mu = 6.188 , theta =3.014),
+ "Other - Other" =list(mu =11.33 , theta =1.227),
+ "Other - Personal/ Business Check" =list(mu =10.31 , theta =3.196),
+ "Other - U.S. Currency"=list(mu = 20 , theta =1.499)
+)
+
+combinaciones_poisson <- list(
+  "Debit Card - Funds Transfer" = 4.333,
+  "Mutual Fund - Other" = 10,
+   "Deposit Account - Other"= 6,
+ "Deposit Account - U.S. Currency"= 7.833,
+ "Mutual Fund - Other"= 10,
+ "Prepaid Access - U.S. Currency" =3.75
+)
+
+# Simulaciones binomial negativa
+set.seed(123)
+simulaciones_binomial <- lapply(combinaciones_binomial, function(params) {
+  rnbinom(n_sim, size = params$theta, mu = params$mu)
+})
+
+# Simulaciones Poisson
+simulaciones_poisson <- lapply(combinaciones_poisson, function(lambda) {
+  rpois(n_sim, lambda)
+})
+
+# Visualización ejemplo
+par(mfrow=c(2,2))
+
+hist(simulaciones_binomial[[1]], main="Credit Card - Bank/Cashier's Check",
+     xlab="Fraudes simulados", col="lightgreen", breaks=30)
+
+hist(simulaciones_binomial[[2]], main="Credit Card - Funds Transfer",
+     xlab="Fraudes simulados", col="lightblue", breaks=30)
+
+hist(simulaciones_binomial[[3]], main="Credit Card - Money Orders",
+     xlab="Fraudes simulados", col="salmon", breaks=30)
+
+hist(simulaciones_binomial[[4]], main="Credit Card - Personal/ Business Check",
+     xlab="Fraudes simulados", col="orange", breaks=30)
+
+hist(simulaciones_binomial[[5]], main="Debit Card - Personal/ Business Check",
+     xlab="Fraudes simulados", col="lightgreen", breaks=30)
+
+hist(simulaciones_binomial[[6]], main="Credit Card - U.S. Currency",
+     xlab="Fraudes simulados", col="lightblue", breaks=30)
+
+hist(simulaciones_binomial[[7]], main="Debit Card -  U.S. Currency",
+     xlab="Fraudes simulados", col="salmon", breaks=30)
+
+hist(simulaciones_binomial[[8]], main="Deposit Account - Bank/ Cashier’s Check",
+     xlab="Fraudes simulados", col="orange", breaks=30)
+
+hist(simulaciones_binomial[[9]], main="Deposit Account - Funds Transfer",
+     xlab="Fraudes simulados", col="lightgreen", breaks=30)
+
+hist(simulaciones_binomial[[10]], main="Deposit Account - Personal/ Business Check",
+     xlab="Fraudes simulados", col="lightblue", breaks=30)
+
+hist(simulaciones_binomial[[11]], main="Insurance/ Annuity Products - Bank/ Cashier’s Check",
+     xlab="Fraudes simulados", col="salmon", breaks=30)
+
+hist(simulaciones_binomial[[12]], main="Insurance/ Annuity Products - Funds Transfer",
+     xlab="Fraudes simulados", col="orange", breaks=30)
+
+hist(simulaciones_binomial[[13]], main="Insurance/ Annuity Products - Money Orders",
+     xlab="Fraudes simulados", col="lightgreen", breaks=30)
+
+hist(simulaciones_binomial[[14]], main="Insurance/ Annuity Products - Other",
+     xlab="Fraudes simulados", col="lightblue", breaks=30)
+
+hist(simulaciones_binomial[[15]], main="Insurance/ Annuity Products - Personal/ Business Check",
+     xlab="Fraudes simulados", col="salmon", breaks=30)
+
+hist(simulaciones_binomial[[16]], main="Insurance/ Annuity Products - U.S. Currency",
+     xlab="Fraudes simulados", col="orange", breaks=30)
+
+hist(simulaciones_binomial[[17]], main="Mutual Fund - Funds Transfer",
+     xlab="Fraudes simulados", col="lightgreen", breaks=30)
+
+hist(simulaciones_binomial[[18]], main="Mutual Fund - Personal/ Business Check",
+     xlab="Fraudes simulados", col="lightblue", breaks=30)
+
+hist(simulaciones_binomial[[19]], main="Other - Bank/Cashier’s Check",
+     xlab="Fraudes simulados", col="salmon", breaks=30)
+
+hist(simulaciones_binomial[[20]], main="Other - Funds Transfer",
+     xlab="Fraudes simulados", col="orange", breaks=30)
+
+hist(simulaciones_binomial[[21]], main="Other - Money Orders",
+     xlab="Fraudes simulados", col="lightgreen", breaks=30)
+
+hist(simulaciones_binomial[[22]], main="Other - Other",
+     xlab="Fraudes simulados", col="lightblue", breaks=30)
+
+hist(simulaciones_binomial[[23]], main="Other - Personal/ Business Check",
+     xlab="Fraudes simulados", col="salmon", breaks=30)
+
+hist(simulaciones_binomial[[24]], main="Other - U.S. Currency",
+     xlab="Fraudes simulados", col="orange", breaks=30)
+
+hist(simulaciones_poisson[[1]], main="Debit Card - Funds Transfer",
+     xlab="Fraudes simulados", col="purple", breaks=30)
+hist(simulaciones_poisson[[2]], main="Mutual Fund - Other",
+     xlab="Fraudes simulados", col="pink", breaks=30)
+hist(simulaciones_poisson[[3]], main="Deposit Account - Other",
+     xlab="Fraudes simulados", col="purple", breaks=30)
+hist(simulaciones_poisson[[4]], main="Deposit Account - U.S. Currency",
+     xlab="Fraudes simulados", col="pink", breaks=30)
+hist(simulaciones_poisson[[5]], main="Mutual Fund - Other",
+     xlab="Fraudes simulados", col="purple", breaks=30)
+hist(simulaciones_poisson[[6]], main="Prepaid Access - U.S. Currency",
+     xlab="Fraudes simulados", col="pink", breaks=30)
+
+```
+
+Cada histograma representa el número de fraudes simulados mensualmente para una combinación producto-instrumento. Se puede observar cómo algunas combinaciones (por ejemplo, "Insurance/ Annuity Products - Funds Transfer") tienen una alta concentración y dispersión, mientras que otras, como "Debit Card - Funds Transfer", presentan una distribución más compacta, compatible con el modelo Poisson.
+
+Este enfoque permite entender con mayor granularidad los patrones de fraude y priorizar esfuerzos de monitoreo y prevención en aquellas combinaciones que presentan mayor riesgo estadístico.
+
+
+
+# Discusión
+
+Los resultados obtenidos a través del modelo propuesto y las simulaciones Monte Carlo permiten comprender mejor la dinámica del fraude en instituciones aseguradoras de Estados Unidos. El análisis general mostró una elevada variabilidad en el número mensual de fraudes, lo que justificó el uso de una distribución binomial negativa sobre la Poisson, al tratarse de datos con sobredispersión. Esta elección metodológica permitió ajustar el modelo a la realidad observada en los datos.
+
+Además del modelo general, se llevaron a cabo simulaciones específicas para distintas combinaciones de producto asegurado e instrumento de pago. Esta segmentación reveló patrones importantes: por ejemplo, combinaciones como Insurance/Annuity Products – Funds Transfer o Insurance/Annuity Products – Personal/Business Check presentan no solo una alta media mensual de fraudes, sino también una dispersión significativa, lo cual indica una alta probabilidad de que ocurran valores extremos. Estas combinaciones representan focos de riesgo que deben priorizarse en procesos de monitoreo y prevención.
+
+En contraste, combinaciones con baja frecuencia y poca variabilidad, como Mutual Fund – Other o Prepaid Access – U.S. Currency, mostraron distribuciones más compactas y predecibles, lo que sugiere que el riesgo asociado a estas es menor.
+
+Estos hallazgos se alinean directamente con los objetivos del proyecto, en particular con los siguientes:
+
+* Modelar la evolución de fraudes mediante simulaciones estocásticas que reflejan su comportamiento incierto en el tiempo.
+
+* Incorporar variables clave como el tipo de producto y el instrumento de pago en el análisis, lo cual permitió entender cómo ciertos factores influyen en la frecuencia de fraude.
+
+* Analizar patrones y tendencias que emergen de la simulación para detectar combinaciones de alto riesgo.
+
+* Evaluar escenarios variables que, en conjunto, permiten anticipar comportamientos atípicos y diseñar estrategias de mitigación más efectivas.
+
+En conjunto, el uso del método de Monte Carlo permitió no solo reproducir la dinámica del fenómeno, sino también generar conocimiento útil para la toma de decisiones. Los resultados obtenidos podrían servir como base para desarrollar herramientas de alerta temprana o modelos predictivos más sofisticados, adaptados a las características específicas del sector asegurador.
+
+
+
+# Conclusiones
+
+Este estudio tuvo como finalidad modelar la evolución de fraudes en instituciones aseguradoras de Estados Unidos mediante simulaciones Monte Carlo, incorporando variables clave como el tipo de producto asegurado y el instrumento de pago. El análisis exploratorio de datos reveló patrones significativos que sustentaron la construcción del modelo.
+
+Entre los principales hallazgos del análisis exploratorio se identificó que los productos “Insurance/Annuity Products” concentraron la mayoría de los incidentes de fraude, seguidos por las cuentas de depósito y tarjetas. Respecto a los instrumentos de pago, las transferencias electrónicas y los cheques personales o comerciales fueron los más frecuentemente asociados a fraudes. Asimismo, se observó una considerable variabilidad mensual en la cantidad de fraudes reportados, lo que sugiere una posible presencia de estacionalidad o factores externos que influyen en su ocurrencia.
+
+Ante la presencia de sobredispersión en los datos, se optó por un modelo basado en la distribución binomial negativa, más adecuada que la Poisson para representar este tipo de fenómeno. Para las combinaciones producto-instrumento con varianza similar a la media, se aplicó la distribución Poisson, siguiendo el principio de parsimonia. Las simulaciones permitieron evaluar escenarios alternativos de ocurrencia mensual de fraudes y evidenciaron cuáles combinaciones presentan mayor riesgo estadístico.
+
+## Limitaciones del estudio
+
+* La base de datos utilizada no incluye información detallada sobre características demográficas, geográficas o contextuales que podrían enriquecer el análisis.
+
+* El modelo no contempla relaciones de dependencia temporal entre eventos, lo que limita la capacidad de capturar comportamientos secuenciales o acumulativos.
+
+* No se aplicaron técnicas de clasificación o predicción supervisada que podrían complementar la simulación con enfoques de aprendizaje automático.
+
+## Recomendaciones para trabajos futuros
+
+* Incorporar variables adicionales relacionadas con los asegurados, entidades emisoras o contexto macroeconómico.
+
+* Evaluar la aplicación de modelos de series de tiempo o procesos autoregresivos que capten dinámicas temporales.
+
+* Explorar el uso de algoritmos de detección de anomalías y clasificación supervisada para identificar patrones de fraude en tiempo real.
+
+* Diseñar herramientas de visualización que permitan monitorear de manera dinámica las combinaciones de mayor riesgo.
+
+Las evidencias obtenidas a través del modelo propuesto constituyen una base útil para la evaluación del riesgo de fraude en el sector asegurador y abren la puerta a desarrollos metodológicos más complejos y específicos para la prevención y gestión de estos eventos.
+
+
+
+
+# Referencias
+
+* Financial Crimes Enforcement Network. (2024). FinCEN SAR Stats database [Base de datos]. https://fincen.gov/reports/sar-stats
+
+* Gonzáles, K. (2008). APLICACIONES DEL MÉTODO DE MONTE CARLO A LA SOLUCIÓN DE ALGUNOS PROBLEMAS FINANCIEROS. Ciudad de México: Instituto Politécnico Nacional.
+
+* Habibpour, M., & al., e. (2023). Uncertainty-aware credit card fraud detection using deep learning. Elsevier.
+
+* Harrison, R. (2010). Introduction To Monte Carlo Simulation. National Institutes of Health, 17-21.
+
+* Ibañez, C. (2024). IMPLEMENTACIÓN DE ALGORITMOS DE MACHINE LEARNING PARA LA DETECCIÓN DE FRAUDES FINANCIEROS INTERNOS EN EJERCICIO DE LA AUDITORÍA TI. Medellín: Corporación Universitaria Remington.
+
+* IBM. (29 de mayo de 2024). ¿Qué es la detección de fraudes? Obtenido de IBM: https://www.ibm.com/mx-es/topics/fraud-detection
+
+* Ignacio Illana, J. (2013). Métodos Monte Carlo. Granada: Departamento de Física Teórica y del Cosmos.
+
+* Munich RE. (18 de diciembre de 2024). ¿Qué tipos de fraude tienen una tendencia al alza? Obtenido de Munich Re Life Estados Unidos: https://www.munichre.com/us-life/en/insights/best-practices/life-insurer-survey--what-types-of-fraud-are-trending-upward-.html
+
+* Nacional de Seguros. (s.f.). Los 8 tipos de fraudes más comunes en el sector asegurador. Obtenido de Nacional de seguros: https://nacionaldeseguros.com.co/noticias/fraudes-mas-comunes-en-el-sector-asegurador/
+
+* Perez, M., et. al. (2008). INTRODUCCION A LOS SISTEMAS DE CONTROL Y MODELO MATEMÁTICO PARA SISTEMAS LINEALES INVARIANTES EN EL TIEMPO. San Juan : Universidad de San Juan.
+
+* Rayo, C. (2020). Prototipo de detección de fraudes con tarjetas de crédito basado en inteligencia artificial aplicado a un banco peruano. Lima: Universidad de Lima.
+
+* Trigueros, G. (2021). Conceptos básicos en simulación. Universidad San Marcos.
+
